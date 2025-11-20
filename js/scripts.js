@@ -176,4 +176,206 @@ function mascara(m,t,e){
   if(cursorfixo && !livre)cursor--;
     t.setSelectionRange(cursor, cursor);
 }
-       
+//formularios fornecedor      
+var vetdados = [
+    {
+        id: 1,
+        nomeFantasia: 'Drogaria Saúde Total',
+        cnpj: '12.345.678/0001-90',
+        cep: '20040-002',
+        logradouro: 'Av. Rio Branco',
+        numero: '150',
+        bairro: 'Centro',
+        cidade: 'Rio de Janeiro',
+        estado: 'RJ',
+        responsavel: 'Carlos Silva',
+        telefone: '(21) 2222-3333',
+        email: 'contato@saudetotal.com.br'
+    },
+    {
+        id: 2,
+        nomeFantasia: 'Farmácia Bem Estar',
+        cnpj: '98.765.432/0001-15',
+        cep: '30130-000',
+        logradouro: 'Rua da Bahia',
+        numero: '1020',
+        bairro: 'Lourdes',
+        cidade: 'Belo Horizonte',
+        estado: 'MG',
+        responsavel: 'Ana Oliveira',
+        telefone: '(31) 3333-4444',
+        email: 'comercial@bemestar.com.br'
+    },
+    {
+        id: 3,
+        nomeFantasia: 'Distribuidora MedLife',
+        cnpj: '45.678.901/0001-23',
+        cep: '80020-000',
+        logradouro: 'Rua XV de Novembro',
+        numero: '500',
+        bairro: 'Centro',
+        cidade: 'Curitiba',
+        estado: 'PR',
+        responsavel: 'Roberto Souza',
+        telefone: '(41) 3030-5050',
+        email: 'vendas@medlife.com'
+    }
+];
+
+function carregatabela(vetdados)
+{
+    let tbody = document.querySelector('#tb-body');
+    let html = '';
+
+    for (let item of vetdados)
+    {
+        html += `
+        <tr>
+            <td><input type="checkbox" data-id="${item.id}"></td>
+            <td>${item.nomeFantasia}</td>
+            <td>${item.cnpj}</td>
+            <td>${item.cep}</td>
+            <td>${item.logradouro}</td>
+            <td>${item.numero}</td>
+            <td>${item.bairro}</td>
+            <td>${item.cidade}</td>
+            <td>${item.estado}</td>
+            <td>${item.responsavel}</td>
+            <td>${item.telefone}</td>
+            <td>${item.email}</td>
+
+            <!-- Botão DELETAR individual -->
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="excluiritem(${item.id})">
+                    Deletar
+                </button>
+            </td>
+        </tr>`;
+    }
+
+    tbody.innerHTML = html;
+}
+
+
+function adicionaritem() {
+    const form = document.querySelector('.needs-validation');
+    if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return; 
+    }
+
+    let novoitem = {
+        id: new Date().getTime(),
+        nomeFantasia: document.querySelector('#nomefantasia').value,
+        cnpj: document.querySelector('#CNPJ').value,
+        cep: document.querySelector('#CEP').value,
+        logradouro: document.querySelector('#logradouro').value,
+        numero: document.querySelector('#numero').value,
+        bairro: document.querySelector('#bairro').value,
+        cidade: document.querySelector('#cidade').value,
+        estado: document.querySelector('#UF').value,
+        responsavel: document.querySelector('#responsavel').value,
+        telefone: document.querySelector('#telefone').value,
+        email: document.querySelector('#email').value
+    };
+
+    vetdados.push(novoitem);
+    carregatabela(vetdados);
+
+    form.reset();
+    form.classList.remove('was-validated');
+}
+
+    function excluiritem(idDelete)
+    {
+        let vetAux = [];
+        for (let i=0; i<vetdados.length;i++)
+        {
+            if(vetdados[i].id != idDelete)
+                    vetAux.push(vetdados[i])
+        }
+        vetdados = vetAux;
+        carregatabela(vetdados);
+    }
+
+function excluirselecionados() {
+    let checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]');
+    let ids = [];
+
+    for (let ck of checkboxes) {
+        if (ck.checked) {
+            ids.push(Number(ck.dataset.id));
+        }
+    }
+
+    if (ids.length === 0) {
+        alert("Nenhum item selecionado.");
+        return;
+    }
+
+    vetdados = vetdados.filter(item => !ids.includes(item.id));
+
+    carregatabela(vetdados);
+    
+    document.querySelector('#ckTodos').checked = false;
+}
+
+function selecionartodos() {
+    let ckpai = document.querySelector('#ckTodos');
+    let vetcheckbox = document.querySelectorAll('input[type="checkbox"][data-id]');
+    
+    for (let ck of vetcheckbox) {
+        ck.checked = ckpai.checked;
+    }
+}
+
+// Inicialização dos Eventos
+document.addEventListener('DOMContentLoaded', function() {
+    carregatabela(vetdados);
+
+    let ckpai = document.querySelector('#ckTodos');
+    if(ckpai) {
+        ckpai.addEventListener('click', selecionartodos, false);
+    }
+
+    let btnExcsel = document.querySelector('#btnExcluirSelecionados');
+    if(btnExcsel) {
+        btnExcsel.addEventListener('click', excluirselecionados, false);
+    }
+
+}, false);
+
+//login
+
+var listaUsuarios = [
+    { login: 'admin', senha: 'admin', nome: 'Administrador Geral' },
+    { login: 'usuario', senha: '123', nome: 'Usuário Comum' }
+];
+
+function fazerLogin() {
+    event.preventDefault();
+
+    var usuarioDigitado = document.getElementById('formUsuario').value;
+    var senhaDigitada = document.getElementById('formPassword').value;
+    var divErro = document.getElementById('mensagemErro');
+
+    divErro.innerHTML = "";
+    if (usuarioDigitado === "" || senhaDigitada === "") {
+        divErro.innerHTML = "Por favor, preencha todos os campos.";
+        return;
+    }
+    var usuarioValido = listaUsuarios.find(function(user) {
+        return (user.login === usuarioDigitado || user.login === 'admin') && user.senha === senhaDigitada;
+    });
+
+    if (usuarioValido) {
+        divErro.innerHTML = "";  
+        document.getElementById('meuFormulario').submit();
+    } else {
+
+        divErro.innerHTML = "Usuário ou senha incorretos!";
+        
+        document.getElementById('formPassword').value = '';
+        document.getElementById('formPassword').focus();
+    }
+}
